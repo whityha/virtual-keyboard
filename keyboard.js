@@ -615,8 +615,47 @@ class Keyboard {
     }   
 
     init(keys) {
+        const wrapper = document.querySelector('.wrapper');
+        const keyboard = document.createElement('div');
+        const textarea = document.querySelector('textarea');
+        keyboard.classList.add('keyboard');
+        for(let i = 0; i < 5; i++) {
+            const line = document.createElement('div');
+            line.classList.add('line', `line-${i}`);
+            for(let key of keys [i]) {
+                const btn = document.createElement('div'); 
+                btn.classList.add(this.keys[key]['size'], 'btn');
+                btn.innerHTML = this.valueBtns(key);
+                btn.setAttribute('data-code',this.keys[key]['code']);
+                if(this.keys[key]['code'] === 'CapsLock' && this.properties['CapsLock']) { 
+                    btn.style.backgroundColor = 'red';
+                } else if(this.keys[key]['code'] === 'ShiftLeft' && this.properties['ShiftLeft']) {
+                    btn.style.backgroundColor = 'red';
+                } else if(this.keys[key] ['code'] === 'ShiftRight' && this.properties['ShiftRight']) {
+                    btn.style.backgroundColor = 'red';
+                }
+                if(this.keys[key] ['functional']) btn.classList.add('functional');
+                line.append(btn);
+            }
+            keyboard.append(line);
+        }
+        const currentKeyboard = document.querySelector('.keyboard');
+        if(currentKeyboard) currentKeyboard.remove();
+        wrapper.append(keyboard);
+        this.textarea = textarea;
+        window.localStorage.setItem('language', this.properties.Language)
+    }    
+    capsBtns(key) {
+        if((this.properties.ShiftLeft || this.properties.ShiftRight) && !this.keys[key].functional && this.keys[key].code != 'Space' && !this.properties.CapsLock) {  //условие, работы клавиатуры, если нажат Shift и не нажат CapsLock      
+            if(this.properties.Language == 'EN' && this.keys[key]['shiftEN']) return this.keys[key]['shiftEN'] //условие отображения альтернативных значений на англ расскалдке при нажатом shift
+            else if (this.properties.Language == 'RU' && this.keys[key]['shiftRU']) return this.keys[key]['shiftRU'] //условие отображения альтернативных значений на русской расскалдке при нажатом shift
+            else return this.keys[key][this.properties.Language].toUpperCase(); //выводит большие буквы, при нажатии на shift
+        } else if(this.properties.CapsLock && !this.keys[key].functional && this.keys[key].code != 'Space' && !(this.properties.ShiftLeft || this.properties.ShiftRight)) { //условия работы при включенном CapsLock и не включенных Shift`ах
+            return this.keys[key][this.properties.Language].toUpperCase();
+        } else {
+            return this.keys[key][this.properties.Language] //возвращается просто меленькие буквы
+        } 
     }
-    valueBtns() {}
     addEventClickOnKeys() {}
 }
 
