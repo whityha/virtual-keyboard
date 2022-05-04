@@ -656,7 +656,75 @@ class Keyboard {
             return this.keys[key][this.properties.Language] //возвращается просто меленькие буквы
         } 
     }
-    addEventClickOnKeys() {}
+    addEventClickOnKeys() {        
+        document.querySelector('.wrapper').addEventListener('click', (e) => { //навешиваем обработчики событий на кнопки            
+            if(e.target.classList.contains('btn')) {    
+                if(e.target.dataset.code == 'Tab') { //рабоата кнопки Tab
+                    document.querySelector('textarea').value += '\t';
+                } else if(e.target.dataset.code == 'CapsLock') { //включение/выключение кнопки CapsLock
+                    this.properties['CapsLock'] = !this.properties['CapsLock']; 
+                    this.init(keyz);                    
+                } else if(e.target.dataset.code == 'ShiftRight') { //включение выключение правого шифта
+                    this.properties['ShiftRight'] = !this.properties['ShiftRight']; 
+                    this.init(keyz);                    
+                } else if(e.target.dataset.code == 'ShiftLeft') { //включение выключение левого шифта
+                    this.properties['ShiftLeft'] = !this.properties['ShiftLeft'];
+                    this.init(keyz);                    
+                } else if((e.target.dataset.code == 'AltLeft' || e.target.dataset.code == 'AltRight') && 
+                (this.properties['ShiftLeft'] || this.properties['ShiftRight'])) { //переключение языка при нажатом Shift
+                    if(this.properties.Language == 'RU') {
+                    this.properties.Language = 'EN';
+                    this.properties.ShiftLeft = false;
+                    this.properties.ShiftRight = false;
+                    this.init(keyz);
+                    } else {
+                        this.properties.Language = 'RU';
+                        this.properties.ShiftLeft = false;
+                        this.properties.ShiftRight = false;
+                        this.init(keyz);
+                    }                    
+                } else if(!this.keys[e.target.dataset.code].functional && !e.target.dataset.data == 'Space' && (this.properties['ShiftRight'] || this.properties['ShiftLeft'])) {
+                    document.querySelector('textarea').value += e.target.innerHTML
+                    this.properties.ShiftLeft = false;
+                    this.properties.ShiftRight = false;
+                    this.init(keyz)                    
+                } else if(e.target.dataset.code == 'Space') {
+                    document.querySelector('textarea').value += ' ';                    
+                } else if(e.target.dataset.code == 'Enter') {
+                    document.querySelector('textarea').value += '\n';                    
+                } else if(e.target.dataset.code == 'Backspace') {                    
+                    const i = this.textarea.selectionStart
+                    const j = this.textarea.selectionEnd
+                    if(i === j) { //удаление одного символа
+                        this.textarea.value = this.textarea.value.substring(0, i - 1) + this.textarea.value.substring(i)
+                        this.textarea.selectionStart = i - 1;
+                        this.textarea.selectionEnd = i - 1;
+                    } else { //удаление выделенного набора символов
+                        this.textarea.value = this.textarea.value.substring(0, i) + this.textarea.value.substring(j)
+                        this.textarea.selectionStart = i;
+                        this.textarea.selectionEnd = i;
+                    }                    
+                } else if(e.target.dataset.code == 'Delete') {
+                    const i = this.textarea.selectionStart
+                    const j = this.textarea.selectionEnd
+                    if(i === j) { //удаление одного символа
+                        this.textarea.value = this.textarea.value.substring(0, i) + this.textarea.value.substring(i+1)
+                        this.textarea.selectionStart = i;
+                        this.textarea.selectionEnd = i;
+                    } else { //удаление выделенного набора символов
+                        this.textarea.value = this.textarea.value.substring(0, i) + this.textarea.value.substring(j)
+                        this.textarea.selectionStart = i;
+                        this.textarea.selectionEnd = i;
+                    }   
+                } else if(this.keys[e.target.dataset.code].arrow) { // функционал для работы стрелочек навигации по окну
+                    document.querySelector('textarea') .value += e.target.innerHTML;
+                } else if(!this.keys[e.target.dataset.code].functional) {
+                    document.querySelector('textarea') .value += e.target.innerHTML;
+                } 
+                this.textarea.focus() 
+            }          
+        });
+    }
 }
 
 startPage();
