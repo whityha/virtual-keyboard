@@ -12,7 +12,8 @@ class Keyboard {
         this.properties = {
             CapsLock: false, 
             ShiftLeft: false, 
-            ShiftRight: false
+            ShiftRight: false,
+            Language: window.localStorage.getItem('language') || 'EN'
         },
         this.keys = { 
             Backquote: {
@@ -625,7 +626,7 @@ class Keyboard {
             for(let key of keys [i]) {
                 const btn = document.createElement('div'); 
                 btn.classList.add(this.keys[key]['size'], 'btn');
-                btn.innerHTML = this.valueBtns(key);
+                btn.innerHTML = this.capsBtns(key);
                 btn.setAttribute('data-code',this.keys[key]['code']);
                 if(this.keys[key]['code'] === 'CapsLock' && this.properties['CapsLock']) { 
                     btn.style.backgroundColor = 'red';
@@ -731,6 +732,29 @@ startPage();
 const keyboard = new Keyboard;
 keyboard.init(keyz)
 keyboard.addEventClickOnKeys();
+
+document.body.addEventListener('keydown', (e) => {
+    const btn = document.querySelector(`[data-code=${e.code}]`);
+    btn.style.backgroundColor = 'red';
+    if(keyboard.keys[e.code]['code'] == 'Tab' || keyboard.keys[e.code]['EN'] == 'Alt') e.preventDefault();
+    if(e.altKey && e.shiftKey) {
+        keyboard.properties.Language == 'RU' ? keyboard.properties.Language = 'EN' : keyboard.properties.Language = 'RU';        
+        keyboard.init(keyz)
+    }    
+});
+
+document.body.addEventListener('keyup', (e) => {    
+    if(keyboard.keys[e.code]['code'] === 'Tab') {
+        e.preventDefault();
+        keyboard.textarea.value += '\t'
+    }
+    document.querySelector(`[data-code=${e.code}]`).style = null;
+
+    if(keyboard.keys[e.code]['code'] === 'CapsLock') {
+        keyboard.properties['CapsLock'] = !keyboard.properties['CapsLock'];
+        keyboard.init(keyz);
+    }
+});
 
 function startPage() {
     const wrapper = document.createElement('div');
