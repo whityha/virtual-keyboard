@@ -620,6 +620,11 @@ class Keyboard {
     addEventClickOnKeys() {}
 }
 
+startPage();
+const keyboard = new Keyboard;
+keyboard.init(keyz)
+keyboard.addEventClickOnKeys();
+
 function startPage() {
     const wrapper = document.createElement('div');
     const textarea = document.createElement('textarea');
