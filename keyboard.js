@@ -12,7 +12,8 @@ class Keyboard {
         this.properties = {
             CapsLock: false, 
             ShiftLeft: false, 
-            ShiftRight: false
+            ShiftRight: false,
+            Language: window.localStorage.getItem('language') || 'EN'
         },
         this.keys = { 
             Backquote: {
@@ -625,7 +626,7 @@ class Keyboard {
             for(let key of keys [i]) {
                 const btn = document.createElement('div'); 
                 btn.classList.add(this.keys[key]['size'], 'btn');
-                btn.innerHTML = this.valueBtns(key);
+                btn.innerHTML = this.capsBtns(key);
                 btn.setAttribute('data-code',this.keys[key]['code']);
                 if(this.keys[key]['code'] === 'CapsLock' && this.properties['CapsLock']) { 
                     btn.style.backgroundColor = 'red';
