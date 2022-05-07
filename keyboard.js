@@ -653,7 +653,11 @@ class Keyboard {
             else return this.keys[key][this.properties.Language].toUpperCase(); //выводит большие буквы, при нажатии на shift
         } else if(this.properties.CapsLock && !this.keys[key].functional && this.keys[key].code != 'Space' && !(this.properties.ShiftLeft || this.properties.ShiftRight)) { //условия работы при включенном CapsLock и не включенных Shift`ах
             return this.keys[key][this.properties.Language].toUpperCase();
-        } else {
+        } else if(this.properties.CapsLock && (this.properties.ShiftLeft || this.properties.ShiftRight)) { //условие для нажатых и CapsLock и Shift
+            if(this.properties.Language == 'EN' && this.keys[key]['shiftEN']) return this.keys[key]['shiftEN'] //условие отображения альтернативных значений на англ расскалдке при нажатом shift
+            else if (this.properties.Language == 'RU' && this.keys[key]['shiftRU']) return this.keys[key]['shiftRU'] //условие отображения альтернативных значений на русской расскалдке при нажатом shift
+            else return this.keys[key][this.properties.Language]
+        } else {            
             return this.keys[key][this.properties.Language] //возвращается просто меленькие буквы
         } 
     }
@@ -674,10 +678,11 @@ class Keyboard {
                 } else if((e.target.dataset.code == 'AltLeft' || e.target.dataset.code == 'AltRight') && 
                 (this.properties['ShiftLeft'] || this.properties['ShiftRight'])) { //переключение языка при нажатом Shift
                     if(this.properties.Language == 'RU') {
-                    this.properties.Language = 'EN';
-                    this.properties.ShiftLeft = false;
-                    this.properties.ShiftRight = false;
-                    this.init(keyz);
+                        this.properties.Language = 'EN';
+                        this.properties.ShiftLeft = false;
+                        this.properties.ShiftRight = false;
+                        this.init(keyz);
+                        console.log(this.properties.ShiftLeft)
                     } else {
                         this.properties.Language = 'RU';
                         this.properties.ShiftLeft = false;
@@ -717,13 +722,19 @@ class Keyboard {
                         this.textarea.selectionStart = i;
                         this.textarea.selectionEnd = i;
                     }   
-                } else if(this.keys[e.target.dataset.code].arrow) { // функционал для работы стрелочек навигации по окну
-                    document.querySelector('textarea') .value += e.target.innerHTML;
+                } else if(this.keys[e.target.dataset.code].arrow) { // функционал для отображения стрелочек
+                    document.querySelector('textarea').value += e.target.innerText;
                 } else if(!this.keys[e.target.dataset.code].functional) {
-                    document.querySelector('textarea') .value += e.target.innerHTML;
+                    document.querySelector('textarea').value += e.target.innerText;
+                    if(keyboard.properties.ShiftLeft == true || keyboard.properties.ShiftRight == true) {
+                        keyboard.properties.ShiftLeft = false;
+                        keyboard.properties.ShiftRight = false;
+                        keyboard.init(keyz)
+                    }
                 } 
-                this.textarea.focus() 
-            }          
+                this.textarea.focus()
+            }     
+                
         });
     }
 }
@@ -733,26 +744,66 @@ const keyboard = new Keyboard;
 keyboard.init(keyz)
 keyboard.addEventClickOnKeys();
 
+
 document.body.addEventListener('keydown', (e) => {
-    const btn = document.querySelector(`[data-code=${e.code}]`);
-    btn.style.backgroundColor = 'red';
-    if(keyboard.keys[e.code]['code'] == 'Tab' || keyboard.keys[e.code]['EN'] == 'Alt') e.preventDefault();
-    if(e.altKey && e.shiftKey) {
-        keyboard.properties.Language == 'RU' ? keyboard.properties.Language = 'EN' : keyboard.properties.Language = 'RU';        
-        keyboard.init(keyz)
-    }    
+    let condition =  keyz.some(item => item.includes(e.code))
+   
+    if(condition) {   
+        const btn = document.querySelector(`[data-code=${e.code}]`);
+        btn.style.backgroundColor = 'red';
+
+        if(keyboard.keys[e.code]['code'] == 'Tab' || keyboard.keys[e.code]['EN'] == 'Alt') e.preventDefault();
+
+        if(e.altKey && e.shiftKey) {
+            keyboard.properties.Language == 'RU' ? keyboard.properties.Language = 'EN' : keyboard.properties.Language = 'RU';        
+            keyboard.init(keyz)
+        }
+
+        if(e.code == 'ShiftLeft') {
+            if(keyboard.properties.ShiftLeft) {
+                e.preventDefault()
+            } else {
+                keyboard.properties.ShiftLeft = true
+                keyboard.init(keyz)
+            }
+        }    
+        if(e.code == 'ShiftRight') {   
+            if(keyboard.properties.ShiftRight) {
+                e.preventDefault()
+            } else {
+                keyboard.properties.ShiftRight = true
+                keyboard.init(keyz)
+            }         
+            
+        }    
+    }
 });
 
-document.body.addEventListener('keyup', (e) => {    
-    if(keyboard.keys[e.code]['code'] === 'Tab') {
-        e.preventDefault();
-        keyboard.textarea.value += '\t'
-    }
-    document.querySelector(`[data-code=${e.code}]`).style = null;
+document.body.addEventListener('keyup', (e) => {
+    let condition =  keyz.some(item => item.includes(e.code))
+    if(condition) {     
+        if(keyboard.keys[e.code]['code'] === 'Tab') {
+            e.preventDefault();
+            keyboard.textarea.value += '\t'
+        }
+        if(keyboard.keys[e.code]['code'] != 'ShiftLeft' && keyboard.keys[e.code]['code'] != 'ShiftRight') {
+            document.querySelector(`[data-code=${e.code}]`).style = null;            
+        }
 
-    if(keyboard.keys[e.code]['code'] === 'CapsLock') {
-        keyboard.properties['CapsLock'] = !keyboard.properties['CapsLock'];
-        keyboard.init(keyz);
+        if(keyboard.keys[e.code]['code'] === 'CapsLock') {
+            keyboard.properties['CapsLock'] = !keyboard.properties['CapsLock'];
+            keyboard.init(keyz);
+        }
+
+        if(e.code == 'ShiftLeft') {            
+            keyboard.properties.ShiftLeft = false
+            keyboard.init(keyz)
+        }
+        
+        if(e.code == 'ShiftRight') {            
+            keyboard.properties.ShiftRight = false
+            keyboard.init(keyz);
+        }   
     }
 });
 
@@ -768,7 +819,12 @@ function startPage() {
     textarea.classList.add('text');
     keyboard.classList.add('keyboard');
     title_text.innerHTML = 'RSS Virtual Keyboard'
-    switch_language.innerHTML = 'Смена языка осуществляется комбинацией клавиш Shift + Alt как на виртуальной клавиатуре, так и на физической'
+    switch_language.innerHTML = `
+        <p>Смена языка осуществляется комбинацией клавиш левый Shift + левый Alt как на виртуальной клавиатуре, так и на физической</p>
+        <p>Включение Shift - однократное нажатие на кнопку Shift на виртуальной клавиатуре</p>
+        <p>Включение CapsLock - однократное нажатие на кнопку CapsLock на физической, либо виртуальной клавиатуре</p>
+        <p>Если нажать на Shift при уже включенном CapsLock - буквы становятся маленькими, но другие символы такие же, как при включенном Shift</p>
+    `
     wrapper.append(title_text, textarea, switch_language, keyboard);
     document.querySelector('body').prepend(wrapper)
 }
