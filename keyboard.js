@@ -13,7 +13,8 @@ class Keyboard {
             CapsLock: false, 
             ShiftLeft: false, 
             ShiftRight: false,
-            Language: window.localStorage.getItem('language') || 'EN'
+            altOn: false,
+            language: window.localStorage.getItem('language') || 'EN'
         },
         this.keys = { 
             Backquote: {
@@ -629,11 +630,13 @@ class Keyboard {
                 btn.innerHTML = this.capsBtns(key);
                 btn.setAttribute('data-code',this.keys[key]['code']);
                 if(this.keys[key]['code'] === 'CapsLock' && this.properties['CapsLock']) { 
-                    btn.style.backgroundColor = 'red';
+                    btn.classList.add('red_background');
                 } else if(this.keys[key]['code'] === 'ShiftLeft' && this.properties['ShiftLeft']) {
-                    btn.style.backgroundColor = 'red';
+                    btn.classList.add('red_background');
                 } else if(this.keys[key] ['code'] === 'ShiftRight' && this.properties['ShiftRight']) {
-                    btn.style.backgroundColor = 'red';
+                    btn.classList.add('red_background');
+                } else if(this.keys[key] ['code'] === 'AltLeft' && this.properties.altOn) {
+                    btn.classList.add('red_background');
                 }
                 if(this.keys[key] ['functional']) btn.classList.add('functional');
                 line.append(btn);
@@ -644,21 +647,21 @@ class Keyboard {
         if(currentKeyboard) currentKeyboard.remove();
         wrapper.append(keyboard);
         this.textarea = textarea;
-        window.localStorage.setItem('language', this.properties.Language)
+        window.localStorage.setItem('language', this.properties.language)
     }    
     capsBtns(key) {
         if((this.properties.ShiftLeft || this.properties.ShiftRight) && !this.keys[key].functional && this.keys[key].code != 'Space' && !this.properties.CapsLock) {  //условие, работы клавиатуры, если нажат Shift и не нажат CapsLock      
-            if(this.properties.Language == 'EN' && this.keys[key]['shiftEN']) return this.keys[key]['shiftEN'] //условие отображения альтернативных значений на англ расскалдке при нажатом shift
-            else if (this.properties.Language == 'RU' && this.keys[key]['shiftRU']) return this.keys[key]['shiftRU'] //условие отображения альтернативных значений на русской расскалдке при нажатом shift
-            else return this.keys[key][this.properties.Language].toUpperCase(); //выводит большие буквы, при нажатии на shift
+            if(this.properties.language == 'EN' && this.keys[key]['shiftEN']) return this.keys[key]['shiftEN'] //условие отображения альтернативных значений на англ расскалдке при нажатом shift
+            else if (this.properties.language == 'RU' && this.keys[key]['shiftRU']) return this.keys[key]['shiftRU'] //условие отображения альтернативных значений на русской расскалдке при нажатом shift
+            else return this.keys[key][this.properties.language].toUpperCase(); //выводит большие буквы, при нажатии на shift
         } else if(this.properties.CapsLock && !this.keys[key].functional && this.keys[key].code != 'Space' && !(this.properties.ShiftLeft || this.properties.ShiftRight)) { //условия работы при включенном CapsLock и не включенных Shift`ах
-            return this.keys[key][this.properties.Language].toUpperCase();
+            return this.keys[key][this.properties.language].toUpperCase();
         } else if(this.properties.CapsLock && (this.properties.ShiftLeft || this.properties.ShiftRight)) { //условие для нажатых и CapsLock и Shift
-            if(this.properties.Language == 'EN' && this.keys[key]['shiftEN']) return this.keys[key]['shiftEN'] //условие отображения альтернативных значений на англ расскалдке при нажатом shift
-            else if (this.properties.Language == 'RU' && this.keys[key]['shiftRU']) return this.keys[key]['shiftRU'] //условие отображения альтернативных значений на русской расскалдке при нажатом shift
-            else return this.keys[key][this.properties.Language]
+            if(this.properties.language == 'EN' && this.keys[key]['shiftEN']) return this.keys[key]['shiftEN'] //условие отображения альтернативных значений на англ расскалдке при нажатом shift
+            else if (this.properties.language == 'RU' && this.keys[key]['shiftRU']) return this.keys[key]['shiftRU'] //условие отображения альтернативных значений на русской расскалдке при нажатом shift
+            else return this.keys[key][this.properties.language]
         } else {            
-            return this.keys[key][this.properties.Language] //возвращается просто меленькие буквы
+            return this.keys[key][this.properties.language] //возвращается просто меленькие буквы
         } 
     }
     addEventClickOnKeys() {        
@@ -677,14 +680,13 @@ class Keyboard {
                     this.init(keyz);                    
                 } else if((e.target.dataset.code == 'AltLeft' || e.target.dataset.code == 'AltRight') && 
                 (this.properties['ShiftLeft'] || this.properties['ShiftRight'])) { //переключение языка при нажатом Shift
-                    if(this.properties.Language == 'RU') {
-                        this.properties.Language = 'EN';
+                    if(this.properties.language == 'RU') {
+                        this.properties.language = 'EN';
                         this.properties.ShiftLeft = false;
                         this.properties.ShiftRight = false;
                         this.init(keyz);
-                        console.log(this.properties.ShiftLeft)
                     } else {
-                        this.properties.Language = 'RU';
+                        this.properties.language = 'RU';
                         this.properties.ShiftLeft = false;
                         this.properties.ShiftRight = false;
                         this.init(keyz);
@@ -747,16 +749,16 @@ keyboard.addEventClickOnKeys();
 
 document.body.addEventListener('keydown', (e) => {
     let condition =  keyz.some(item => item.includes(e.code))
-   
     if(condition) {   
         const btn = document.querySelector(`[data-code=${e.code}]`);
-        btn.style.backgroundColor = 'red';
+        btn.classList.add('red_background');
 
         if(keyboard.keys[e.code]['code'] == 'Tab' || keyboard.keys[e.code]['EN'] == 'Alt') e.preventDefault();
 
-        if(e.altKey && e.shiftKey) {
-            keyboard.properties.Language == 'RU' ? keyboard.properties.Language = 'EN' : keyboard.properties.Language = 'RU';        
-            keyboard.init(keyz)
+        if(e.shiftKey && e.altKey) {
+            keyboard.properties.language == 'RU' ? keyboard.properties.language = 'EN' : keyboard.properties.language = 'RU';               
+            keyboard.properties.altOn = true;     
+            keyboard.init(keyz);
         }
 
         if(e.code == 'ShiftLeft') {
@@ -764,7 +766,7 @@ document.body.addEventListener('keydown', (e) => {
                 e.preventDefault()
             } else {
                 keyboard.properties.ShiftLeft = true
-                keyboard.init(keyz)
+                keyboard.init(keyz)               
             }
         }    
         if(e.code == 'ShiftRight') {   
@@ -787,21 +789,24 @@ document.body.addEventListener('keyup', (e) => {
             keyboard.textarea.value += '\t'
         }
         if(keyboard.keys[e.code]['code'] != 'ShiftLeft' && keyboard.keys[e.code]['code'] != 'ShiftRight') {
-            document.querySelector(`[data-code=${e.code}]`).style = null;            
+            document.querySelector(`[data-code=${e.code}]`).classList.remove('red_background');            
         }
 
         if(keyboard.keys[e.code]['code'] === 'CapsLock') {
             keyboard.properties['CapsLock'] = !keyboard.properties['CapsLock'];
             keyboard.init(keyz);
-        }
+        }      
 
+       
         if(e.code == 'ShiftLeft') {            
             keyboard.properties.ShiftLeft = false
-            keyboard.init(keyz)
+            keyboard.properties.altOn = false; 
+            keyboard.init(keyz)            
         }
         
         if(e.code == 'ShiftRight') {            
             keyboard.properties.ShiftRight = false
+            keyboard.properties.altOn = false; 
             keyboard.init(keyz);
         }   
     }
