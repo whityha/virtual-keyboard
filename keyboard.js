@@ -1,4 +1,4 @@
-'use stict'
+'use stict';
 const keyz = [
     ['Backquote', 'Digit1', 'Digit2','Digit3','Digit4','Digit5','Digit6','Digit7','Digit8','Digit9','Digit0','Minus','Equal','Backspace'],
     ['Tab','KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY','KeyU','KeyI','KeyO','KeyP','BracketLeft','BracketRight','Backslash','Delete'],
@@ -783,6 +783,7 @@ document.body.addEventListener('keydown', (e) => {
 
 document.body.addEventListener('keyup', (e) => {
     let condition =  keyz.some(item => item.includes(e.code))
+    console.log(e)
     if(condition) {     
         if(keyboard.keys[e.code]['code'] === 'Tab') {
             e.preventDefault();
