@@ -831,11 +831,13 @@ document.body.addEventListener('keyup', (e) => {
         }
         if (e.code === 'ShiftLeft') {
             keyboard.properties.ShiftLeft = false;
+            keyboard.properties.ShiftRight = false;
             keyboard.properties.altOn = false;
             keyboard.init(keyz);
         }
         if (e.code === 'ShiftRight') {
             keyboard.properties.ShiftRight = false;
+            keyboard.properties.ShiftLeft = false;
             keyboard.properties.altOn = false;
             keyboard.init(keyz);
         }
