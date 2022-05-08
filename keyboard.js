@@ -668,7 +668,7 @@ class Keyboard {
         document.querySelector('.wrapper').addEventListener('click', (e) => { //навешиваем обработчики событий на кнопки            
             if(e.target.classList.contains('btn')) {    
                 if(e.target.dataset.code == 'Tab') { //рабоата кнопки Tab
-                    document.querySelector('textarea').value += '\t';
+                    addValue(this, '\t');
                 } else if(e.target.dataset.code == 'CapsLock') { //включение/выключение кнопки CapsLock
                     this.properties['CapsLock'] = !this.properties['CapsLock']; 
                     this.init(keyz);                    
@@ -697,9 +697,9 @@ class Keyboard {
                     this.properties.ShiftRight = false;
                     this.init(keyz)                    
                 } else if(e.target.dataset.code == 'Space') {
-                    document.querySelector('textarea').value += ' ';                    
+                    addValue(this, ' ');                    
                 } else if(e.target.dataset.code == 'Enter') {
-                    document.querySelector('textarea').value += '\n';                    
+                    addValue(this, '\n');                    
                 } else if(e.target.dataset.code == 'Backspace') {                    
                     const i = this.textarea.selectionStart
                     const j = this.textarea.selectionEnd
@@ -725,9 +725,9 @@ class Keyboard {
                         this.textarea.selectionEnd = i;
                     }   
                 } else if(this.keys[e.target.dataset.code].arrow) { // функционал для отображения стрелочек
-                    document.querySelector('textarea').value += e.target.innerText;
+                    addValue(this, e.target.innerText);
                 } else if(!this.keys[e.target.dataset.code].functional) {
-                    document.querySelector('textarea').value += e.target.innerText;
+                    addValue(this, e.target.innerText);
                     if(keyboard.properties.ShiftLeft == true || keyboard.properties.ShiftRight == true) {
                         keyboard.properties.ShiftLeft = false;
                         keyboard.properties.ShiftRight = false;
@@ -738,6 +738,7 @@ class Keyboard {
             }     
                 
         });
+        
     }
 }
 
@@ -783,11 +784,10 @@ document.body.addEventListener('keydown', (e) => {
 
 document.body.addEventListener('keyup', (e) => {
     let condition =  keyz.some(item => item.includes(e.code))
-    console.log(e)
     if(condition) {     
         if(keyboard.keys[e.code]['code'] === 'Tab') {
             e.preventDefault();
-            keyboard.textarea.value += '\t'
+            addValue(keyboard, '\t');
         }
         if(keyboard.keys[e.code]['code'] != 'ShiftLeft' && keyboard.keys[e.code]['code'] != 'ShiftRight') {
             document.querySelector(`[data-code=${e.code}]`).classList.remove('red_background');            
@@ -812,6 +812,15 @@ document.body.addEventListener('keyup', (e) => {
         }   
     }
 });
+
+const addValue = (obj, value) => {
+    const i = obj.textarea.selectionStart
+    const j = obj.textarea.selectionEnd
+    if(i === j) obj.textarea.value = obj.textarea.value.substring(0, i) + value + obj.textarea.value.substring(i)
+    else obj.textarea.value = obj.textarea.value.substring(0, i) + value + obj.textarea.value.substring(j)
+    obj.textarea.selectionStart = i+1;
+    obj.textarea.selectionEnd = i+1;
+}
 
 function startPage() {
     const wrapper = document.createElement('div');
