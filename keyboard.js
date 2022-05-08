@@ -1,39 +1,75 @@
 'use stict';
-const keyz = [
-    ['Backquote', 'Digit1', 'Digit2','Digit3','Digit4','Digit5','Digit6','Digit7','Digit8','Digit9','Digit0','Minus','Equal','Backspace'],
-    ['Tab','KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY','KeyU','KeyI','KeyO','KeyP','BracketLeft','BracketRight','Backslash','Delete'],
-    ['CapsLock','KeyA','KeyS','KeyD','KeyF','KeyG','KeyH','KeyJ','KeyK','KeyL','Semicolon','Quote','Enter'],
-    ['ShiftLeft','IntlBackslash','KeyZ','KeyX','KeyC','KeyV','KeyB','KeyN','KeyM','Comma','Period','Slash','ArrowUp','ShiftRight'],
-    ['ControlLeft','MetaLeft','AltLeft','Space','AltRight','ControlRight','ArrowLeft','ArrowDown','ArrowRight']
-];
 
+const keyz = [
+    ['Backquote', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0', 'Minus', 'Equal', 'Backspace'],
+    ['Tab', 'KeyQ', 'KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', 'KeyO', 'KeyP', 'BracketLeft', 'BracketRight', 'Backslash', 'Delete'],
+    ['CapsLock', 'KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyG', 'KeyH', 'KeyJ', 'KeyK', 'KeyL', 'Semicolon', 'Quote', 'Enter'],
+    ['ShiftLeft', 'IntlBackslash', 'KeyZ', 'KeyX', 'KeyC', 'KeyV', 'KeyB', 'KeyN', 'KeyM', 'Comma', 'Period', 'Slash', 'ArrowUp', 'ShiftRight'],
+    ['ControlLeft', 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'ControlRight', 'ArrowLeft', 'ArrowDown', 'ArrowRight']];
+const addValue = (object, value) => {
+    const i = object.textarea.selectionStart;
+    const j = object.textarea.selectionEnd;
+    const obj = object;
+    if (i === j) {
+        obj.textarea.value = obj.textarea.value.substring(0, i)
+        + value + obj.textarea.value.substring(i);
+    } else {
+        obj.textarea.value = obj.textarea.value.substring(0, i)
+        + value
+        + obj.textarea.value.substring(j);
+    }
+    obj.textarea.selectionStart = i + 1;
+    obj.textarea.selectionEnd = i + 1;
+};
+
+function startPage() {
+    const wrapper = document.createElement('div');
+    const textarea = document.createElement('textarea');
+    const keyboardBlock = document.createElement('div');
+    const titleText = document.createElement('h1');
+    const switchLanguage = document.createElement('p');
+    wrapper.classList.add('wrapper');
+    textarea.autofocus = true;
+    textarea.setAttribute('rows', 15);
+    textarea.classList.add('text');
+    keyboardBlock.classList.add('keyboard');
+    titleText.innerHTML = 'RSS Virtual Keyboard';
+    switchLanguage.innerHTML = `
+        <p>Смена языка осуществляется комбинацией клавиш левый Shift + левый Alt как на виртуальной клавиатуре, так и на физической</p>
+        <p>Включение Shift - однократное нажатие на кнопку Shift на виртуальной клавиатуре</p>
+        <p>Включение CapsLock - однократное нажатие на кнопку CapsLock на физической, либо виртуальной клавиатуре</p>
+        <p>Если нажать на Shift при уже включенном CapsLock - буквы становятся маленькими, но другие символы такие же, как при включенном Shift</p>
+    `;
+    wrapper.append(titleText, textarea, switchLanguage, keyboardBlock);
+    document.querySelector('body').prepend(wrapper);
+}
 class Keyboard {
     constructor() {
         this.properties = {
-            CapsLock: false, 
-            ShiftLeft: false, 
+            CapsLock: false,
+            ShiftLeft: false,
             ShiftRight: false,
             altOn: false,
-            language: window.localStorage.getItem('language') || 'EN'
-        },
-        this.keys = { 
+            language: window.localStorage.getItem('language') || 'EN',
+        };
+        this.keys = {
             Backquote: {
                 EN: '`',
-                RU: 'ё', 
-                functional: false, 
-                size: 'regular', 
+                RU: 'ё',
+                functional: false,
+                size: 'regular',
                 code: 'Backquote',
                 shiftRU: null,
-                shiftEN: '~'
+                shiftEN: '~',
             },
             Digit1: {
                 EN: '1',
-                RU: '1', 
-                functional: false, 
-                size: 'regular', 
+                RU: '1',
+                functional: false,
+                size: 'regular',
                 code: 'Digit1',
                 shiftRU: '!',
-                shiftEN: '!'
+                shiftEN: '!',
             },
             Digit2: {
                 EN: '2',
@@ -42,7 +78,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'Digit2',
                 shiftRU: '"',
-                shiftEN: '@'
+                shiftEN: '@',
             },
             Digit3: {
                 EN: '3',
@@ -51,7 +87,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'Digit3',
                 shiftRU: '№',
-                shiftEN: '#'
+                shiftEN: '#',
             },
             Digit4: {
                 EN: '4',
@@ -60,7 +96,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'Digit4',
                 shiftRU: ';',
-                shiftEN: '$'
+                shiftEN: '$',
             },
             Digit5: {
                 EN: '5',
@@ -69,7 +105,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'Digit5',
                 shiftRU: '%',
-                shiftEN: '%'
+                shiftEN: '%',
             },
             Digit6: {
                 EN: '6',
@@ -78,7 +114,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'Digit6',
                 shiftRU: ':',
-                shiftEN: '^'
+                shiftEN: '^',
             },
             Digit7: {
                 EN: '7',
@@ -87,7 +123,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'Digit7',
                 shiftRU: '?',
-                shiftEN: '&'
+                shiftEN: '&',
             },
             Digit8: {
                 EN: '8',
@@ -96,7 +132,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'Digit8',
                 shiftRU: '*',
-                shiftEN: '*'
+                shiftEN: '*',
             },
             Digit9: {
                 EN: '9',
@@ -105,7 +141,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'Digit9',
                 shiftRU: '(',
-                shiftEN: '('
+                shiftEN: '(',
             },
             Digit0: {
                 EN: '0',
@@ -114,7 +150,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'Digit0',
                 shiftRU: ')',
-                shiftEN: ')'
+                shiftEN: ')',
             },
             Minus: {
                 EN: '-',
@@ -123,7 +159,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'Minus',
                 shiftRU: '_',
-                shiftEN: '_'
+                shiftEN: '_',
             },
             Equal: {
                 EN: '=',
@@ -132,7 +168,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'Equal',
                 shiftRU: '+',
-                shiftEN: '+'
+                shiftEN: '+',
             },
             Backspace: {
                 EN: 'Backspace',
@@ -141,7 +177,7 @@ class Keyboard {
                 size: 'double',
                 code: 'Backspace',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             Tab: {
                 EN: 'Tab',
@@ -150,7 +186,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'Tab',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyQ: {
                 EN: 'q',
@@ -159,7 +195,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyQ',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyW: {
                 EN: 'w',
@@ -168,7 +204,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyW',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyE: {
                 EN: 'e',
@@ -177,7 +213,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyE',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyR: {
                 EN: 'r',
@@ -186,7 +222,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyR',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyT: {
                 EN: 't',
@@ -195,7 +231,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyT',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyY: {
                 EN: 'y',
@@ -204,7 +240,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyY',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyU: {
                 EN: 'u',
@@ -213,7 +249,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyU',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyI: {
                 EN: 'i',
@@ -222,7 +258,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyI',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyO: {
                 EN: 'o',
@@ -231,7 +267,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyO',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyP: {
                 EN: 'p',
@@ -240,7 +276,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyP',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             BracketLeft: {
                 EN: '[',
@@ -249,7 +285,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'BracketLeft',
                 shiftRU: null,
-                shiftEN: '{'
+                shiftEN: '{',
             },
             BracketRight: {
                 EN: ']',
@@ -258,14 +294,14 @@ class Keyboard {
                 size: 'regular',
                 code: 'BracketRight',
                 shiftRU: null,
-                shiftEN: '}'
+                shiftEN: '}',
             },
             Delete: {
                 EN: 'Del',
                 RU: 'Del',
                 functional: true,
                 size: 'regular',
-                code: 'Delete'
+                code: 'Delete',
             },
             CapsLock: {
                 EN: 'CapsLock',
@@ -274,7 +310,7 @@ class Keyboard {
                 size: 'double',
                 code: 'CapsLock',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyA: {
                 EN: 'a',
@@ -283,7 +319,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyA',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyS: {
                 EN: 's',
@@ -292,7 +328,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyS',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyD: {
                 EN: 'd',
@@ -301,7 +337,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyD',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyF: {
                 EN: 'f',
@@ -310,7 +346,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyF',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyG: {
                 EN: 'g',
@@ -319,7 +355,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyG',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyH: {
                 EN: 'h',
@@ -328,7 +364,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyH',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyJ: {
                 EN: 'j',
@@ -337,7 +373,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyJ',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyK: {
                 EN: 'k',
@@ -346,16 +382,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyK',
                 shiftRU: null,
-                shiftEN: null
-            },
-            KeyP: {
-                EN: 'p',
-                RU: 'з',
-                functional: false,
-                size: 'regular',
-                code: 'KeyP',
-                shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyL: {
                 EN: 'l',
@@ -364,7 +391,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyL',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             Semicolon: {
                 EN: ';',
@@ -373,16 +400,16 @@ class Keyboard {
                 size: 'regular',
                 code: 'Semicolon',
                 shiftRU: null,
-                shiftEN: ':'
+                shiftEN: ':',
             },
             Quote: {
-                EN: `'`,
+                EN: '\'',
                 RU: 'э',
                 functional: false,
                 size: 'regular',
                 code: 'Quote',
                 shiftRU: null,
-                shiftEN: '"'
+                shiftEN: '"',
             },
             Enter: {
                 EN: 'Enter',
@@ -391,7 +418,7 @@ class Keyboard {
                 size: 'double',
                 code: 'Enter',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             ShiftLeft: {
                 EN: 'Shift',
@@ -400,7 +427,7 @@ class Keyboard {
                 size: 'double',
                 code: 'ShiftLeft',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             ShiftRight: {
                 EN: 'Shift',
@@ -409,7 +436,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'ShiftRight',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             IntlBackslash: {
                 EN: '/',
@@ -418,7 +445,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'IntlBackslash',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             Backslash: {
                 EN: '\\',
@@ -427,7 +454,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'Backslash',
                 shiftRU: '/',
-                shiftEN: '|'
+                shiftEN: '|',
             },
             Slash: {
                 EN: '/',
@@ -436,7 +463,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'Slash',
                 shiftRU: ',',
-                shiftEN: '?'
+                shiftEN: '?',
             },
             KeyZ: {
                 EN: 'z',
@@ -445,7 +472,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyZ',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyX: {
                 EN: 'x',
@@ -454,7 +481,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyX',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyC: {
                 EN: 'c',
@@ -463,7 +490,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyC',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyV: {
                 EN: 'v',
@@ -472,7 +499,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyV',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyB: {
                 EN: 'b',
@@ -481,7 +508,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyB',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyN: {
                 EN: 'n',
@@ -490,7 +517,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyN',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             KeyM: {
                 EN: 'm',
@@ -499,7 +526,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'KeyM',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             Comma: {
                 EN: ',',
@@ -508,7 +535,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'Comma',
                 shiftRU: null,
-                shiftEN: '<'
+                shiftEN: '<',
             },
             Period: {
                 EN: '.',
@@ -517,7 +544,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'Period',
                 shiftRU: null,
-                shiftEN: '>'
+                shiftEN: '>',
             },
             ArrowUp: {
                 EN: '&#x2191;',
@@ -527,7 +554,7 @@ class Keyboard {
                 code: 'ArrowUp',
                 shiftRU: null,
                 shiftEN: null,
-                arrow: true
+                arrow: true,
             },
             ControlLeft: {
                 EN: 'Ctrl',
@@ -536,7 +563,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'ControlLeft',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             ControlRight: {
                 EN: 'Ctrl',
@@ -545,7 +572,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'ControlRight',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             MetaLeft: {
                 EN: 'Win',
@@ -554,7 +581,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'MetaLeft',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             AltLeft: {
                 EN: 'Alt',
@@ -563,7 +590,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'AltLeft',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             AltRight: {
                 EN: 'Alt',
@@ -572,7 +599,7 @@ class Keyboard {
                 size: 'regular',
                 code: 'AltRight',
                 shiftRU: null,
-                shiftEN: null
+                shiftEN: null,
             },
             ArrowDown: {
                 EN: '&#x2193;',
@@ -582,7 +609,7 @@ class Keyboard {
                 code: 'ArrowDown',
                 shiftRU: null,
                 shiftEN: null,
-                arrow: true
+                arrow: true,
             },
             ArrowLeft: {
                 EN: '&#x2190;',
@@ -592,7 +619,7 @@ class Keyboard {
                 code: 'ArrowLeft',
                 shiftRU: null,
                 shiftEN: null,
-                arrow: true
+                arrow: true,
             },
             ArrowRight: {
                 EN: '&#x2192;',
@@ -602,7 +629,7 @@ class Keyboard {
                 code: 'ArrowRight',
                 shiftRU: null,
                 shiftEN: null,
-                arrow: true
+                arrow: true,
             },
             Space: {
                 EN: 'English',
@@ -611,76 +638,79 @@ class Keyboard {
                 size: 'space',
                 code: 'Space',
                 shiftRU: null,
-                shiftEN: null
-            }
-        }
-    }   
+                shiftEN: null,
+            },
+        };
+    }
 
     init(keys) {
         const wrapper = document.querySelector('.wrapper');
         const keyboard = document.createElement('div');
         const textarea = document.querySelector('textarea');
         keyboard.classList.add('keyboard');
-        for(let i = 0; i < 5; i++) {
+        for (let i = 0; i < 5; i += 1) {
             const line = document.createElement('div');
             line.classList.add('line', `line-${i}`);
-            for(let key of keys [i]) {
-                const btn = document.createElement('div'); 
-                btn.classList.add(this.keys[key]['size'], 'btn');
-                btn.innerHTML = this.capsBtns(key);
-                btn.setAttribute('data-code',this.keys[key]['code']);
-                if(this.keys[key]['code'] === 'CapsLock' && this.properties['CapsLock']) { 
+            keys[i].forEach((item) => {
+                const btn = document.createElement('div');
+                btn.classList.add(this.keys[item].size, 'btn');
+                btn.innerHTML = this.capsBtns(item);
+                btn.setAttribute('data-code', this.keys[item].code);
+                if (this.keys[item].code === 'CapsLock' && this.properties.CapsLock) {
                     btn.classList.add('red_background');
-                } else if(this.keys[key]['code'] === 'ShiftLeft' && this.properties['ShiftLeft']) {
+                } else if (this.keys[item].code === 'ShiftLeft' && this.properties.ShiftLeft) {
                     btn.classList.add('red_background');
-                } else if(this.keys[key] ['code'] === 'ShiftRight' && this.properties['ShiftRight']) {
+                } else if (this.keys[item].code === 'ShiftRight' && this.properties.ShiftRight) {
                     btn.classList.add('red_background');
-                } else if(this.keys[key] ['code'] === 'AltLeft' && this.properties.altOn) {
+                } else if (this.keys[item].code === 'AltLeft' && this.properties.altOn) {
                     btn.classList.add('red_background');
                 }
-                if(this.keys[key] ['functional']) btn.classList.add('functional');
+                if (this.keys[item].functional) btn.classList.add('functional');
                 line.append(btn);
-            }
+            });
             keyboard.append(line);
         }
         const currentKeyboard = document.querySelector('.keyboard');
-        if(currentKeyboard) currentKeyboard.remove();
+        if (currentKeyboard) currentKeyboard.remove();
         wrapper.append(keyboard);
         this.textarea = textarea;
-        window.localStorage.setItem('language', this.properties.language)
-    }    
-    capsBtns(key) {
-        if((this.properties.ShiftLeft || this.properties.ShiftRight) && !this.keys[key].functional && this.keys[key].code != 'Space' && !this.properties.CapsLock) {  //условие, работы клавиатуры, если нажат Shift и не нажат CapsLock      
-            if(this.properties.language == 'EN' && this.keys[key]['shiftEN']) return this.keys[key]['shiftEN'] //условие отображения альтернативных значений на англ расскалдке при нажатом shift
-            else if (this.properties.language == 'RU' && this.keys[key]['shiftRU']) return this.keys[key]['shiftRU'] //условие отображения альтернативных значений на русской расскалдке при нажатом shift
-            else return this.keys[key][this.properties.language].toUpperCase(); //выводит большие буквы, при нажатии на shift
-        } else if(this.properties.CapsLock && !this.keys[key].functional && this.keys[key].code != 'Space' && !(this.properties.ShiftLeft || this.properties.ShiftRight)) { //условия работы при включенном CapsLock и не включенных Shift`ах
-            return this.keys[key][this.properties.language].toUpperCase();
-        } else if(this.properties.CapsLock && (this.properties.ShiftLeft || this.properties.ShiftRight)) { //условие для нажатых и CapsLock и Shift
-            if(this.properties.language == 'EN' && this.keys[key]['shiftEN']) return this.keys[key]['shiftEN'] //условие отображения альтернативных значений на англ расскалдке при нажатом shift
-            else if (this.properties.language == 'RU' && this.keys[key]['shiftRU']) return this.keys[key]['shiftRU'] //условие отображения альтернативных значений на русской расскалдке при нажатом shift
-            else return this.keys[key][this.properties.language]
-        } else {            
-            return this.keys[key][this.properties.language] //возвращается просто меленькие буквы
-        } 
+        window.localStorage.setItem('language', this.properties.language);
     }
-    addEventClickOnKeys() {        
-        document.querySelector('.wrapper').addEventListener('click', (e) => { //навешиваем обработчики событий на кнопки            
-            if(e.target.classList.contains('btn')) {    
-                if(e.target.dataset.code == 'Tab') { //рабоата кнопки Tab
+
+    capsBtns(key) {
+        if ((this.properties.ShiftLeft || this.properties.ShiftRight) && !this.keys[key].functional && this.keys[key].code !== 'Space' && !this.properties.CapsLock) { // условие, работы клавиатуры, если нажат Shift и не нажат CapsLock
+            if (this.properties.language === 'EN' && this.keys[key].shiftEN) return this.keys[key].shiftEN; // условие отображения альтернативных значений на англ расскалдке при нажатом shift
+            if (this.properties.language === 'RU' && this.keys[key].shiftRU) return this.keys[key].shiftRU; // условие отображения альтернативных значений на русской расскалдке при нажатом shift
+            return this.keys[key][this.properties.language].toUpperCase(); // выводит большие буквы
+        }
+        if (this.properties.CapsLock && !this.keys[key].functional && this.keys[key].code !== 'Space' && !(this.properties.ShiftLeft || this.properties.ShiftRight)) { // условия работы при включенном CapsLock и не включенных Shift`ах
+            return this.keys[key][this.properties.language].toUpperCase();
+        }
+        if (this.properties.CapsLock && (this.properties.ShiftLeft
+            || this.properties.ShiftRight)) { // условие для нажатых и CapsLock и Shift
+            if (this.properties.language === 'EN' && this.keys[key].shiftEN) return this.keys[key].shiftEN; // условие отображения альтернативных значений на англ расскалдке при нажатом shift
+            if (this.properties.language === 'RU' && this.keys[key].shiftRU) return this.keys[key].shiftRU; // условие отображения альтернативных значений на русской расскалдке при нажатом shift
+            return this.keys[key][this.properties.language];
+        }
+        return this.keys[key][this.properties.language]; // возвращается просто меленькие буквы
+    }
+
+    addEventClickOnKeys() {
+        document.querySelector('.wrapper').addEventListener('click', (e) => { // навешиваем обработчики событий на кнопки
+            if (e.target.classList.contains('btn')) {
+                if (e.target.dataset.code === 'Tab') { // рабоата кнопки Tab
                     addValue(this, '\t');
-                } else if(e.target.dataset.code == 'CapsLock') { //включение/выключение кнопки CapsLock
-                    this.properties['CapsLock'] = !this.properties['CapsLock']; 
-                    this.init(keyz);                    
-                } else if(e.target.dataset.code == 'ShiftRight') { //включение выключение правого шифта
-                    this.properties['ShiftRight'] = !this.properties['ShiftRight']; 
-                    this.init(keyz);                    
-                } else if(e.target.dataset.code == 'ShiftLeft') { //включение выключение левого шифта
-                    this.properties['ShiftLeft'] = !this.properties['ShiftLeft'];
-                    this.init(keyz);                    
-                } else if((e.target.dataset.code == 'AltLeft' || e.target.dataset.code == 'AltRight') && 
-                (this.properties['ShiftLeft'] || this.properties['ShiftRight'])) { //переключение языка при нажатом Shift
-                    if(this.properties.language == 'RU') {
+                } else if (e.target.dataset.code === 'CapsLock') { // включение/выключение кнопки CapsLock
+                    this.properties.CapsLock = !this.properties.CapsLock;
+                    this.init(keyz);
+                } else if (e.target.dataset.code === 'ShiftRight') { // включение выключение правого шифта
+                    this.properties.ShiftRight = !this.properties.ShiftRight;
+                    this.init(keyz);
+                } else if (e.target.dataset.code === 'ShiftLeft') { // включение выключение левого шифта
+                    this.properties.ShiftLeft = !this.properties.ShiftLeft;
+                    this.init(keyz);
+                } else if ((e.target.dataset.code === 'AltLeft' || e.target.dataset.code === 'AltRight') && (this.properties.ShiftLeft || this.properties.ShiftRight)) { // переключение языка при нажатом Shift
+                    if (this.properties.language === 'RU') {
                         this.properties.language = 'EN';
                         this.properties.ShiftLeft = false;
                         this.properties.ShiftRight = false;
@@ -690,156 +720,124 @@ class Keyboard {
                         this.properties.ShiftLeft = false;
                         this.properties.ShiftRight = false;
                         this.init(keyz);
-                    }                    
-                } else if(!this.keys[e.target.dataset.code].functional && !e.target.dataset.data == 'Space' && (this.properties['ShiftRight'] || this.properties['ShiftLeft'])) {
-                    document.querySelector('textarea').value += e.target.innerHTML
+                    }
+                } else if (!this.keys[e.target.dataset.code].functional && !e.target.dataset.data === 'Space' && (this.properties.ShiftRight || this.properties.ShiftLeft)) {
+                    document.querySelector('textarea').value += e.target.innerHTML;
                     this.properties.ShiftLeft = false;
                     this.properties.ShiftRight = false;
-                    this.init(keyz)                    
-                } else if(e.target.dataset.code == 'Space') {
-                    addValue(this, ' ');                    
-                } else if(e.target.dataset.code == 'Enter') {
-                    addValue(this, '\n');                    
-                } else if(e.target.dataset.code == 'Backspace') {                    
-                    const i = this.textarea.selectionStart
-                    const j = this.textarea.selectionEnd
-                    if(i === j) { //удаление одного символа
-                        this.textarea.value = this.textarea.value.substring(0, i - 1) + this.textarea.value.substring(i)
+                    this.init(keyz);
+                } else if (e.target.dataset.code === 'Space') {
+                    addValue(this, ' ');
+                } else if (e.target.dataset.code === 'Enter') {
+                    addValue(this, '\n');
+                } else if (e.target.dataset.code === 'Backspace') {
+                    const i = this.textarea.selectionStart;
+                    const j = this.textarea.selectionEnd;
+                    if (i === j) { // удаление одного символа
+                        this.textarea.value = this.textarea.value.substring(0, i - 1)
+                                              + this.textarea.value.substring(i);
                         this.textarea.selectionStart = i - 1;
                         this.textarea.selectionEnd = i - 1;
-                    } else { //удаление выделенного набора символов
-                        this.textarea.value = this.textarea.value.substring(0, i) + this.textarea.value.substring(j)
+                    } else { // удаление выделенного набора символов
+                        this.textarea.value = this.textarea.value.substring(0, i)
+                                              + this.textarea.value.substring(j);
                         this.textarea.selectionStart = i;
                         this.textarea.selectionEnd = i;
-                    }                    
-                } else if(e.target.dataset.code == 'Delete') {
-                    const i = this.textarea.selectionStart
-                    const j = this.textarea.selectionEnd
-                    if(i === j) { //удаление одного символа
-                        this.textarea.value = this.textarea.value.substring(0, i) + this.textarea.value.substring(i+1)
-                        this.textarea.selectionStart = i;
-                        this.textarea.selectionEnd = i;
-                    } else { //удаление выделенного набора символов
-                        this.textarea.value = this.textarea.value.substring(0, i) + this.textarea.value.substring(j)
-                        this.textarea.selectionStart = i;
-                        this.textarea.selectionEnd = i;
-                    }   
-                } else if(this.keys[e.target.dataset.code].arrow) { // функционал для отображения стрелочек
-                    addValue(this, e.target.innerText);
-                } else if(!this.keys[e.target.dataset.code].functional) {
-                    addValue(this, e.target.innerText);
-                    if(keyboard.properties.ShiftLeft == true || keyboard.properties.ShiftRight == true) {
-                        keyboard.properties.ShiftLeft = false;
-                        keyboard.properties.ShiftRight = false;
-                        keyboard.init(keyz)
                     }
-                } 
-                this.textarea.focus()
-            }     
-                
+                } else if (e.target.dataset.code === 'Delete') {
+                    const i = this.textarea.selectionStart;
+                    const j = this.textarea.selectionEnd;
+                    if (i === j) { // удаление одного символа
+                        this.textarea.value = this.textarea.value.substring(0, i)
+                                              + this.textarea.value.substring(i + 1);
+                        this.textarea.selectionStart = i;
+                        this.textarea.selectionEnd = i;
+                    } else { // удаление выделенного набора символов
+                        this.textarea.value = this.textarea.value.substring(0, i)
+                                              + this.textarea.value.substring(j);
+                        this.textarea.selectionStart = i;
+                        this.textarea.selectionEnd = i;
+                    }
+                } else if (this.keys[e.target.dataset.code].arrow) {
+                    addValue(this, e.target.innerText); // функционал для отображения стрелочек
+                } else if (!this.keys[e.target.dataset.code].functional) {
+                    addValue(this, e.target.innerText);
+                    if (this.properties.ShiftLeft === true
+                        || this.properties.ShiftRight === true) {
+                        this.properties.ShiftLeft = false;
+                        this.properties.ShiftRight = false;
+                        this.init(keyz);
+                    }
+                }
+                this.textarea.focus();
+            }
         });
-        
     }
 }
 
 startPage();
-const keyboard = new Keyboard;
-keyboard.init(keyz)
+const keyboard = new Keyboard();
+keyboard.init(keyz);
 keyboard.addEventClickOnKeys();
 
-
 document.body.addEventListener('keydown', (e) => {
-    let condition =  keyz.some(item => item.includes(e.code))
-    if(condition) {   
+    const condition = keyz.some((item) => item.includes(e.code));
+    if (condition) {
         const btn = document.querySelector(`[data-code=${e.code}]`);
         btn.classList.add('red_background');
 
-        if(keyboard.keys[e.code]['code'] == 'Tab' || keyboard.keys[e.code]['EN'] == 'Alt') e.preventDefault();
+        if (keyboard.keys[e.code].code === 'Tab' || keyboard.keys[e.code].EN === 'Alt') e.preventDefault();
 
-        if(e.shiftKey && e.altKey) {
-            keyboard.properties.language == 'RU' ? keyboard.properties.language = 'EN' : keyboard.properties.language = 'RU';               
-            keyboard.properties.altOn = true;     
+        if (e.shiftKey && e.altKey) {
+            if (keyboard.properties.language === 'RU') keyboard.properties.language = 'EN';
+            else keyboard.properties.language = 'RU';
+            keyboard.properties.altOn = true;
             keyboard.init(keyz);
         }
 
-        if(e.code == 'ShiftLeft') {
-            if(keyboard.properties.ShiftLeft) {
-                e.preventDefault()
+        if (e.code === 'ShiftLeft') {
+            if (keyboard.properties.ShiftLeft) {
+                e.preventDefault();
             } else {
-                keyboard.properties.ShiftLeft = true
-                keyboard.init(keyz)               
+                keyboard.properties.ShiftLeft = true;
+                keyboard.init(keyz);
             }
-        }    
-        if(e.code == 'ShiftRight') {   
-            if(keyboard.properties.ShiftRight) {
-                e.preventDefault()
+        }
+        if (e.code === 'ShiftRight') {
+            if (keyboard.properties.ShiftRight) {
+                e.preventDefault();
             } else {
-                keyboard.properties.ShiftRight = true
-                keyboard.init(keyz)
-            }         
-            
-        }    
+                keyboard.properties.ShiftRight = true;
+                keyboard.init(keyz);
+            }
+        }
     }
 });
 
 document.body.addEventListener('keyup', (e) => {
-    let condition =  keyz.some(item => item.includes(e.code))
-    if(condition) {     
-        if(keyboard.keys[e.code]['code'] === 'Tab') {
+    const condition = keyz.some((item) => item.includes(e.code));
+    if (condition) {
+        if (keyboard.keys[e.code].code === 'Tab') {
             e.preventDefault();
             addValue(keyboard, '\t');
         }
-        if(keyboard.keys[e.code]['code'] != 'ShiftLeft' && keyboard.keys[e.code]['code'] != 'ShiftRight') {
-            document.querySelector(`[data-code=${e.code}]`).classList.remove('red_background');            
+        if (keyboard.keys[e.code].code !== 'ShiftLeft' && keyboard.keys[e.code].code !== 'ShiftRight') {
+            document.querySelector(`[data-code=${e.code}]`).classList.remove('red_background');
         }
 
-        if(keyboard.keys[e.code]['code'] === 'CapsLock') {
-            keyboard.properties['CapsLock'] = !keyboard.properties['CapsLock'];
+        if (keyboard.keys[e.code].code === 'CapsLock') {
+            keyboard.properties.CapsLock = !keyboard.properties.CapsLock;
             keyboard.init(keyz);
-        }      
-
-       
-        if(e.code == 'ShiftLeft') {            
-            keyboard.properties.ShiftLeft = false
-            keyboard.properties.altOn = false; 
-            keyboard.init(keyz)            
         }
-        
-        if(e.code == 'ShiftRight') {            
-            keyboard.properties.ShiftRight = false
-            keyboard.properties.altOn = false; 
+        if (e.code === 'ShiftLeft') {
+            keyboard.properties.ShiftLeft = false;
+            keyboard.properties.altOn = false;
             keyboard.init(keyz);
-        }   
+        }
+        if (e.code === 'ShiftRight') {
+            keyboard.properties.ShiftRight = false;
+            keyboard.properties.altOn = false;
+            keyboard.init(keyz);
+        }
     }
 });
-
-const addValue = (obj, value) => {
-    const i = obj.textarea.selectionStart
-    const j = obj.textarea.selectionEnd
-    if(i === j) obj.textarea.value = obj.textarea.value.substring(0, i) + value + obj.textarea.value.substring(i)
-    else obj.textarea.value = obj.textarea.value.substring(0, i) + value + obj.textarea.value.substring(j)
-    obj.textarea.selectionStart = i+1;
-    obj.textarea.selectionEnd = i+1;
-}
-
-function startPage() {
-    const wrapper = document.createElement('div');
-    const textarea = document.createElement('textarea');
-    const keyboard = document.createElement('div');
-    const title_text = document.createElement('h1');
-    const switch_language = document.createElement('p');
-    wrapper.classList.add('wrapper');
-    textarea.autofocus = true;
-    textarea.setAttribute('rows', 15);
-    textarea.classList.add('text');
-    keyboard.classList.add('keyboard');
-    title_text.innerHTML = 'RSS Virtual Keyboard'
-    switch_language.innerHTML = `
-        <p>Смена языка осуществляется комбинацией клавиш левый Shift + левый Alt как на виртуальной клавиатуре, так и на физической</p>
-        <p>Включение Shift - однократное нажатие на кнопку Shift на виртуальной клавиатуре</p>
-        <p>Включение CapsLock - однократное нажатие на кнопку CapsLock на физической, либо виртуальной клавиатуре</p>
-        <p>Если нажать на Shift при уже включенном CapsLock - буквы становятся маленькими, но другие символы такие же, как при включенном Shift</p>
-    `
-    wrapper.append(title_text, textarea, switch_language, keyboard);
-    document.querySelector('body').prepend(wrapper)
-}
