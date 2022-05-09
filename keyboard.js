@@ -22,7 +22,7 @@ const addValue = (object, value) => {
     obj.textarea.selectionEnd = i + 1;
 };
 
-function startPage() {
+const startPage = () => {
     const wrapper = document.createElement('div');
     const textarea = document.createElement('textarea');
     const keyboardBlock = document.createElement('div');
@@ -42,7 +42,7 @@ function startPage() {
     `;
     wrapper.append(titleText, textarea, switchLanguage, keyboardBlock);
     document.querySelector('body').prepend(wrapper);
-}
+};
 class Keyboard {
     constructor() {
         this.properties = {
